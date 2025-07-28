@@ -1,23 +1,23 @@
-e## MLP To-DO - Instructions
+## MLP To-Do
 
-You must demonstrate the following abilities/skills: make models, controllers, migrations, HTML, CSS, blade, Git commits, blade templates, etc. 
+To run the to-do app, please do the following:
 
-**1. Fork this repo**
+**1. Clone the repo and cd into the working directory**
 
-**2. Build front-end**
+**2. Do the following commands:**
+```bash
+composer install
+npm install
+cp .env-example .env
+```
+**3. At this point, you'll need to create a database and a user, and update the .env accordingly**
 
-   Layout must be as follows:
-   
-   ![Alt text](assets/site-layout.png?raw=true "Title")
-   Please note that the above image and logo are in the 'assets' folder.
+**4. Then, run the following:**
+```bash
+npm run dev
+php artisan serve
+php artisan key:generate
+php artisan migrate
+```
 
-**3. Build To-Do list functionality** 
-
-     A user should be able to
-     * Create a task.
-     * Delete a task.
-     * Mark a task as completed.
-     
-
-**Good Luck !!! Once done, please send us the link of your repo.**
-   
+The serve command should let you know where the application is running.
