@@ -17,8 +17,9 @@ class TaskController extends Controller
      */
     public function index(): View
     {
-        // dd(Task::all());
-        return view('tasks');
+        return view('tasks', [
+            'tasks' => Task::all()
+        ]);
     }
 
     /**
@@ -65,17 +66,19 @@ class TaskController extends Controller
     /**
      * Update the specified resource in storage.
      */
-    public function update(UpdateTaskRequest $request, Task $task)
+    public function update(UpdateTaskRequest $request, Task $task): RedirectResponse
     {
         $validatedData = $request->validated();
         $task->update($validatedData);
+        return redirect()->route('tasks.index');
     }
 
     /**
      * Remove the specified resource from storage.
      */
-    public function destroy(Task $task)
+    public function destroy(Task $task): RedirectResponse
     {
         $task->delete();
+        return redirect()->route('tasks.index');
     }
 }
