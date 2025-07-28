@@ -5,16 +5,20 @@ namespace App\Http\Controllers;
 use App\Http\Requests\StoreTaskRequest;
 use App\Http\Requests\UpdateTaskRequest;
 use App\Models\Task;
-use Illuminate\Support\Facades\DB;
+use Exception;
+use Illuminate\Contracts\View\View;
+use Illuminate\Http\RedirectResponse;
+use Illuminate\Support\Facades\Log;
 
 class TaskController extends Controller
 {
     /**
      * Display a listing of the resource.
      */
-    public function index()
+    public function index(): View
     {
-        return Task::all();
+        // dd(Task::all());
+        return view('tasks');
     }
 
     /**
@@ -28,10 +32,18 @@ class TaskController extends Controller
     /**
      * Store a newly created resource in storage.
      */
-    public function store(StoreTaskRequest $request)
+    public function store(StoreTaskRequest $request): RedirectResponse
     {
-        $validatedData = $request->validated();
-        return Task::create($validatedData);
+        try {
+            $validatedData = $request->validated();
+            $task = Task::create($validatedData);
+            session()->flash('message', 'Task added.');
+            return redirect()->route('tasks.index');
+        } catch (Exception $exception) {
+            Log::error($exception->getMessage(), ['inputData' => $request->all()]);
+            session()->flash('error', 'Could not create task, please try again.');
+            return redirect()->route('tasks.index')->with('error', 'Could not create task, please try again.');
+        }
     }
 
     /**
