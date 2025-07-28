@@ -23,14 +23,6 @@ class TaskController extends Controller
     }
 
     /**
-     * Show the form for creating a new resource.
-     */
-    public function create()
-    {
-        //
-    }
-
-    /**
      * Store a newly created resource in storage.
      */
     public function store(StoreTaskRequest $request): RedirectResponse
@@ -38,29 +30,11 @@ class TaskController extends Controller
         try {
             $validatedData = $request->validated();
             $task = Task::create($validatedData);
-            session()->flash('message', 'Task added.');
-            return redirect()->route('tasks.index');
+            return redirect()->route('tasks.index')->with('message', 'Task added.');
         } catch (Exception $exception) {
             Log::error($exception->getMessage(), ['inputData' => $request->all()]);
-            session()->flash('error', 'Could not create task, please try again.');
             return redirect()->route('tasks.index')->with('error', 'Could not create task, please try again.');
         }
-    }
-
-    /**
-     * Display the specified resource.
-     */
-    public function show(Task $task)
-    {
-        //
-    }
-
-    /**
-     * Show the form for editing the specified resource.
-     */
-    public function edit(Task $task)
-    {
-        //
     }
 
     /**
@@ -68,17 +42,28 @@ class TaskController extends Controller
      */
     public function update(UpdateTaskRequest $request, Task $task): RedirectResponse
     {
-        $validatedData = $request->validated();
-        $task->update($validatedData);
-        return redirect()->route('tasks.index');
+        try {
+            $validatedData = $request->validated();
+            $task->update($validatedData);
+            return redirect()->route('tasks.index')->with('message', 'Task updated.');
+        } catch (Exception $exception) {
+            Log::error($exception->getMessage(), ['task_id' => $task->id, 'inputData' => $request->all()]);
+            return redirect()->route('tasks.index')->with('error', 'Could not update task, please try again.');
+        }
     }
 
     /**
      * Remove the specified resource from storage.
      */
-    public function destroy(Task $task): RedirectResponse
-    {
-        $task->delete();
-        return redirect()->route('tasks.index');
-    }
+
+     public function destroy(Task $task): RedirectResponse
+     {
+         try {
+             $task->delete();
+             return redirect()->route('tasks.index')->with('message', 'Task deleted.');
+         } catch (Exception $exception) {
+             Log::error($exception->getMessage(), ['task_id' => $task->id]);
+             return redirect()->route('tasks.index')->with('error', 'Could not delete task, please try again.');
+         }
+     }
 }
